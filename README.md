@@ -1,83 +1,139 @@
 # Cursor Hackathon · IE University · March 2026
 
-**Organized by TechIE x Building & Tech · Sponsored by Cursor**
+**Organized by TechIE x Building and Tech · Sponsored by Cursor**
 
----
+## 1. Overview
 
-## Event Overview
+This repository is your starting point for the hackathon.
 
-A one-day hackathon at IE University on **Wednesday, March 25th 2026**. Solo or teams of up to 4. All participants receive Cursor credits.
+Your flow is simple.
 
-No technical background required. If you can describe what needs to exist, you can build it.
+1. Clone this repo
+2. Build your project during the event
+3. Deploy it on Vercel
+4. Submit it through the Google Form
+5. Present it live
 
----
+This repo is here to help you move quickly from idea to deployment.
 
-## The Challenge
+## 2. The Challenge
 
-**Make one person's hard day easier.**
+**Make one person’s hard day easier.**
 
-Not a platform. Not a product. Pick someone whose daily life is harder than it needs to be — a nurse, a single parent, a small business owner, a carer — and build something that solves one specific, concrete problem in their day.
+This challenge is intentionally open to interpretation.
 
-You have to actually talk to that person before you build.
+You are not being asked to build one specific type of product. You are being asked to identify a real person, understand what makes their day difficult, and build something that helps in a meaningful way.
 
-Full brief in [CHALLENGE.md](./CHALLENGE.md).
+The strongest projects will be grounded in a real situation, focused in scope, and clear in their usefulness.
 
----
+Read the full brief and rubric in [CHALLENGE.md](./CHALLENGE.md).
 
-## Rules
+## 3. Who Can Participate
 
-- Project must be **deployed** to participate (Vercel, Replit, or equivalent)
-- Built during the event only — no pre-built projects
-- Teams of up to 4, solo allowed
-- No technical background required
+1. Solo participants or teams of up to 4
+2. No technical background required
+3. All participants receive Cursor credits
 
----
+You do not need to be an experienced developer to participate. If you can clearly describe what should exist, you can use this hackathon to build it.
 
-## Judging Criteria
+## 4. Rules
 
-Judges are looking for:
+1. Your project must be built during the event
+2. Your project must be deployed on Vercel
+3. Your final submission must include a live link
+4. Teams may have up to 4 people
+5. Solo participation is allowed
 
-- **Creative ambition** — did you reach for something meaningful?
-- **Real utility** — would the person you built this for actually use it?
-- **How far you pushed the tools** — Cursor is the medium, not just the shortcut
+## 5. Evaluation Rubric
 
-Not slide polish. Not market size. Not a pitch deck.
+Projects will be evaluated based on the rubric in [CHALLENGE.md](./CHALLENGE.md), with particular attention to the following areas:
 
-Judges include an engineer from Cursor, VCs, and technical leaders.
+1. Understanding of the person and problem
+2. Relevance and usefulness
+3. Quality of execution
+4. Creativity and interpretation
+5. Use of tools to extend what was possible
+6. Presentation and storytelling
 
----
+## 6. How to Use This Repo
 
-## Agenda
+### 6.1 Clone the repository
 
-- **Sunday, March 22nd** — Application deadline
-- **Tuesday, March 24th** (evening) — Meetup at IE University — challenge reveal, team formation, Q&A, Cursor credits distributed
-- **Wednesday, March 25th** (15:00) — Mentor session near the auditorium — deployment help, pitch practice, last refinements. Sign-up slots + open space.
-- **Wednesday, March 25th** (16:00) — **Submission deadline. Hard cutoff. Deployed URL must be live.**
-- **Wednesday, March 25th** (16:00–17:00) — Pre-selection: judges review all submissions, up to 15 finalists chosen
-- **Wednesday, March 25th** (17:00) — Finale in the auditorium — opening, Cursor intro, challenge recap, prize reveal, finalist reveal, pitches, awards, networking
+```bash
+git clone <YOUR_REPO_URL>
+cd <YOUR_REPO_NAME>
+```
 
----
+### 6.2 Build your project
 
-## Jury
+Use this starter however you want. You can adapt it, replace it, or extend it to match your idea.
 
-- **David Gomes** — Engineer at Cursor
-- **Javier** — CEO & Co-Founder at NomuLabs
-- **Jon Ortega** — CEO at Wrappers AI
-- **Desirée Alayza** — CEO at BCombinator
-- **Andrey Bazhin** — Lead Engineer at Teramind, Co-founder of Madrid Tech Brunch
+Your goal is to create a project that clearly demonstrates your solution and can be accessed through a live URL.
 
----
+### 6.3 Run locally
 
-## How to Submit
+Install dependencies and start the development server:
 
-Submit your project via the Google Form before **16:00 on March 25th**: [https://forms.gle/dS1H98eJoZwsXj7e7](https://forms.gle/dS1H98eJoZwsXj7e7).
+```bash
+npm install
+npm run dev
+```
 
-You'll need your GitHub repo link and your deployed Vercel URL.
+### 6.4 Deploy to Vercel
 
----
+Your final project must be live on Vercel.
 
-## Resources
+A typical deployment flow looks like this:
 
-- [Challenge brief](./CHALLENGE.md)
-- [Practical tips](./resources/tips.md)
-- [Starter project](./starter/) — zero-config Vercel deploy, ready to build on top of
+```bash
+npx vercel
+```
+
+You can also connect your GitHub repository directly to Vercel and deploy from there.
+
+Before submitting, make sure the deployment link works, the project loads correctly, and the core functionality is accessible to judges.
+
+## 7. Submission
+
+Once your project is deployed, submit it through the Google Form:
+
+**[Submit here](https://forms.gle/dS1H98eJoZwsXj7e7).**
+
+Your submission should include the following:
+
+1. Team name
+2. Team members
+3. Project title
+4. Short description
+5. Deployed Vercel link
+
+Only submitted projects with a working deployed link will be considered.
+
+## 8. Presentation
+
+After submitting, your team will present the project live.
+
+Your presentation should clearly communicate four things:
+
+1. Who you built for
+2. What problem you identified
+3. What you built
+4. Why your solution makes that person’s day easier
+
+This is not only about showing features. It is also about showing your reasoning, your interpretation of the challenge, and the story behind the project.
+
+## 9. Included Resources
+
+1. [Challenge brief and rubric](./CHALLENGE.md)
+2. [Practical tips](./resources/tips.md)
+3. [Starter project](./starter/)
+
+## 10. Final Reminder
+
+Build something focused.
+
+Deploy it.
+
+Submit the live link.
+
+Then tell the story of why it matters.

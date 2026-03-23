@@ -28,7 +28,7 @@ The starter folder in this repo is a zero-config Vercel deploy. Fork the repo, i
 
 **Judges will open your URL.** If it's not live, your project doesn't exist.
 
-**Submission deadline is 16:00 — not 17:00.** Hard cutoff. No exceptions.
+**Submission deadline is 16:00** Hard cutoff. No exceptions.
 
 ---
 
