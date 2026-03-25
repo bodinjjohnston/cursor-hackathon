@@ -6,16 +6,6 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   try {
     const idea = req.body.idea;
-    const systemPrompt = `You are a startup advisor. Return ONLY valid JSON with no markdown or backticks.
-The JSON must have these exact keys:
-demand_signals: array of 3 strings
-competition: array of 2 strings  
-red_flags: array of 2 strings
-market_gaps: array of 2 strings
-verdict: one sentence string
-verdict_label: exactly GO or CAUTION or STOP
-roadmap: array of exactly 5 objects each with: step number, phase string, title string, description string under 15 words, priority string of immediate or short-term or long-term, sources array with one object having name and url, contacts array with one object having name url and reason`;
-
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -23,12 +13,77 @@ roadmap: array of exactly 5 objects each with: step number, phase string, title 
         'Authorization': 'Bearer ' + process.env.GROQ_API_KEY,
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: 'mixtral-8x7b-32768',
         max_tokens: 1500,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Validate this startup idea and create a launch roadmap: ' + idea }
+          {
+            role: 'system',
+            content: 'You are a startup market analyst. Always respond with valid JSON only. No markdown. No explanation. Just JSON.'
+          },
+          {
+            role: 'user',
+            content: `Analyze this startup idea: "${idea}"
+
+Respond with this exact JSON structure:
+{
+  "demand_signals": ["signal 1", "signal 2", "signal 3"],
+  "competition": ["competitor 1", "competitor 2"],
+  "red_flags": ["risk 1", "risk 2"],
+  "market_gaps": ["gap 1", "gap 2"],
+  "verdict": "One sentence verdict on whether to pursue this.",
+  "verdict_label": "GO",
+  "roadmap": [
+    {
+      "step": 1,
+      "phase": "Legal",
+      "title": "Register your business",
+      "description": "Set up legal entity and get required licenses.",
+      "priority": "immediate",
+      "sources": [{"name": "IRS Business Registration", "url": "https://www.irs.gov/businesses"}],
+      "contacts": [{"name": "SCORE Mentors", "url": "https://www.score.org", "reason": "Free startup advice"}]
+    },
+    {
+      "step": 2,
+      "phase": "Research",
+      "title": "Validate with real users",
+      "description": "Talk to 10 potential customers before building.",
+      "priority": "immediate",
+      "sources": [{"name": "Y Combinator How to Start", "url": "https://www.ycombinator.com/library/6g-how-to-talk-to-users"}],
+      "contacts": [{"name": "LinkedIn", "url": "https://www.linkedin.com", "reason": "Find target customers"}]
+    },
+    {
+      "step": 3,
+      "phase": "Build",
+      "title": "Build MVP",
+      "description": "Build minimum viable product in 4 weeks.",
+      "priority": "short-term",
+      "sources": [{"name": "Lovable.dev", "url": "https://lovable.dev"}],
+      "contacts": [{"name": "Indie Hackers", "url": "https://www.indiehackers.com", "reason": "Find technical co-founder"}]
+    },
+    {
+      "step": 4,
+      "phase": "Launch",
+      "title": "Launch publicly",
+      "description": "Post on Product Hunt and relevant communities.",
+      "priority": "short-term",
+      "sources": [{"name": "Product Hunt", "url": "https://www.producthunt.com"}],
+      "contacts": [{"name": "Product Hunt", "url": "https://www.producthunt.com/posts/new", "reason": "Submit your launch"}]
+    },
+    {
+      "step": 5,
+      "phase": "Grow",
+      "title": "Get first paying customers",
+      "description": "Convert free users to paid within 30 days.",
+      "priority": "long-term",
+      "sources": [{"name": "Stripe Atlas", "url": "https://stripe.com/atlas"}],
+      "contacts": [{"name": "AngelList", "url": "https://www.angellist.com", "reason": "Find early investors"}]
+    }
+  ]
+}
+
+Replace all values with real analysis of the idea. verdict_label must be GO, CAUTION, or STOP.`
+          }
         ]
       })
     });
