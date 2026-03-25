@@ -4,244 +4,872 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signal — Real Market Validation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #0a0a0a; --surface: #111; --border: #2a2a2a; --accent: #e8ff57; --text: #f0f0f0; --muted: #666; --green: #57ffb8; --red: #ff5757; --yellow: #ffd557; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
-    .container { max-width: 780px; margin: 0 auto; padding: 60px 24px 100px; }
-    header { margin-bottom: 64px; }
-    .tag { display: inline-block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; margin-bottom: 20px; }
-    h1 { font-family: 'Syne', sans-serif; font-size: clamp(48px,8vw,80px); font-weight: 800; line-height: .95; letter-spacing: -.03em; margin-bottom: 20px; }
-    h1 span { color: var(--accent); }
-    .subtitle { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 480px; }
-    .input-label { display: block; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-    textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px; line-height: 1.7; padding: 20px; resize: none; height: 140px; outline: none; transition: border-color .2s; }
-    textarea::placeholder { color: var(--muted); }
-    textarea:focus { border-color: var(--accent); }
-    .input-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
-    .btn { margin-top: 20px; display: inline-flex; align-items: center; gap: 12px; background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 16px 32px; border: none; cursor: pointer; transition: transform .15s; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    #loading { display: none; margin: 40px 0; padding: 32px; border: 1px solid var(--border); background: var(--surface); }
-    .loading-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-    .loading-steps { list-style: none; }
-    .loading-steps li { font-size: 13px; color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; transition: color .3s; }
-    .loading-steps li:last-child { border-bottom: none; }
-    .loading-steps li.active { color: var(--text); }
-    .loading-steps li.done { color: var(--green); }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-    .loading-steps li.active .dot { background: var(--accent); animation: pulse 1s infinite; }
-    .loading-steps li.done .dot { background: var(--green); }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
-    #results { display: none; animation: fadeUp .4s ease; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
-    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-    .results-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-    .verdict-badge { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 6px 14px; border: 1px solid; }
-    .verdict-go { color: var(--green); border-color: var(--green); }
-    .verdict-caution { color: var(--yellow); border-color: var(--yellow); }
-    .verdict-stop { color: var(--red); border-color: var(--red); }
-    .cards { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
-    .card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
-    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .card-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid var(--border); flex-shrink: 0; }
-    .card-title { font-family: 'Syne', san
-cat > index.html << 'EOF'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signal — Real Market Validation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #0a0a0a; --surface: #111; --border: #2a2a2a; --accent: #e8ff57; --text: #f0f0f0; --muted: #666; --green: #57ffb8; --red: #ff5757; --yellow: #ffd557; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
-    .container { max-width: 780px; margin: 0 auto; padding: 60px 24px 100px; }
-    header { margin-bottom: 64px; }
-    .tag { display: inline-block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; margin-bottom: 20px; }
-    h1 { font-family: 'Syne', sans-serif; font-size: clamp(48px,8vw,80px); font-weight: 800; line-height: .95; letter-spacing: -.03em; margin-bottom: 20px; }
-    h1 span { color: var(--accent); }
-    .subtitle { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 480px; }
-    .input-label { display: block; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-    textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px; line-height: 1.7; padding: 20px; resize: none; height: 140px; outline: none; transition: border-color .2s; }
-    textarea::placeholder { color: var(--muted); }
-    textarea:focus { border-color: var(--accent); }
-    .input-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
-    .btn { margin-top: 20px; display: inline-flex; align-items: center; gap: 12px; background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 16px 32px; border: none; cursor: pointer; transition: transform .15s; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    #loading { display: none; margin: 40px 0; padding: 32px; border: 1px solid var(--border); background: var(--surface); }
-    .loading-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-    .loading-steps { list-style: none; }
-    .loading-steps li { font-size: 13px; color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; transition: color .3s; }
-    .loading-steps li:last-child { border-bottom: none; }
-    .loading-steps li.active { color: var(--text); }
-    .loading-steps li.done { color: var(--green); }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-    .loading-steps li.active .dot { background: var(--accent); animation: pulse 1s infinite; }
-    .loading-steps li.done .dot { background: var(--green); }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
-    #results { display: none; animation: fadeUp .4s ease; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
-    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-    .results-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-    .verdict-badge { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 6px 14px; border: 1px solid; }
-    .verdict-go { color: var(--green); border-color: var(--green); }
-    .verdict-caution { color: var(--yellow); border-color: var(--yellow); }
-    .verdict-stop { color: var(--red); border-color: var(--red); }
-    .cards { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
-    .card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
-    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .card-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid var(--border); flex-shrink: 0; }
-    .card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
-    .signal-item { padding: 10px 0; border-bottom: 1px solid var(--borde
 
-cat > index.html << 'EOF'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signal — Real Market Validation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #0a0a0a; --surface: #111; --border: #2a2a2a; --accent: #e8ff57; --text: #f0f0f0; --muted: #666; --green: #57ffb8; --red: #ff5757; --yellow: #ffd557; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
-    .container { max-width: 780px; margin: 0 auto; padding: 60px 24px 100px; }
-    header { margin-bottom: 64px; }
-    .tag { display: inline-block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; margin-bottom: 20px; }
-    h1 { font-family: 'Syne', sans-serif; font-size: clamp(48px,8vw,80px); font-weight: 800; line-height: .95; letter-spacing: -.03em; margin-bottom: 20px; }
-    h1 span { color: var(--accent); }
-    .subtitle { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 480px; }
-    .input-label { display: block; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-    textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px; line-height: 1.7; padding: 20px; resize: none; height: 140px; outline: none; transition: border-color .2s; }
-    textarea::placeholder { color: var(--muted); }
-    textarea:focus { border-color: var(--accent); }
-    .input-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
-    .btn { margin-top: 20px; display: inline-flex; align-items: center; gap: 12px; background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 16px 32px; border: none; cursor: pointer; transition: transform .15s; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    #loading { display: none; margin: 40px 0; padding: 32px; border: 1px solid var(--border); background: var(--surface); }
-    .loading-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-    .loading-steps { list-style: none; }
-    .loading-steps li { font-size: 13px; color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; transition: color .3s; }
-    .loading-steps li:last-child { border-bottom: none; }
-    .loading-steps li.active { color: var(--text); }
-    .loading-steps li.done { color: var(--green); }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-    .loading-steps li.active .dot { background: var(--accent); animation: pulse 1s infinite; }
-    .loading-steps li.done .dot { background: var(--green); }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
-    #results { display: none; animation: fadeUp .4s ease; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
-    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-    .results-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-    .verdict-badge { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 6px 14px; border: 1px solid; }
-    .verdict-go { color: var(--green); border-color: var(--green); }
-    .verdict-caution { color: var(--yellow); border-color: var(--yellow); }
-    .verdict-stop { color: var(--red); border-color: var(--red); }
-    .cards { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
-    .card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
-    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .card-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid var(--border); flex-shrink: 0; }
-    .card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
-    .signal-item { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.6; }
-    .signal-item:last-child { border-bottom: none; }
-    .signal-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
-    .green .signal-dot { background: var(--green); }
-    .red .signal-dot { background: var(--red); }
-    .yellow .signal-dot { background: var(--yellow); }
-    .verdict-section { background: var(--surface); border: 1px solid var(--accent); padding: 28px; margin-top: 4px; }
-    .verdict-label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-    .verdict-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; line-height: 1.4; color: var(--text); }
-    #error { display: none; padding: 20px; border: 1px solid var(--red); background: var(--surface); color: var(--red); font-size: 13px; margin-top: 20px; }
-    .reset-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 12px; padding: 10px 18px; cursor: pointer; margin-top: 32px; transition: border-color .2s, color .2s; }
-    .reset-btn:hover { border-color: var(--text); color: var(--text); }
-    footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
+    :root {
+      --bg: #080808;
+      --bg2: #0f0f0f;
+      --bg3: #161616;
+      --bg4: #1c1c1c;
+      --border: rgba(255,255,255,0.06);
+      --border2: rgba(255,255,255,0.1);
+      --border3: rgba(255,255,255,0.16);
+      --accent: #7c3aed;
+      --accent2: #a78bfa;
+      --accent3: #c4b5fd;
+      --accent-glow: rgba(124,58,237,0.12);
+      --accent-border: rgba(124,58,237,0.25);
+      --text: #fafafa;
+      --text2: #a1a1aa;
+      --text3: #52525b;
+      --green: #34d399;
+      --green-bg: rgba(52,211,153,0.07);
+      --green-border: rgba(52,211,153,0.15);
+      --red: #f87171;
+      --red-bg: rgba(248,113,113,0.07);
+      --red-border: rgba(248,113,113,0.15);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251,191,36,0.07);
+      --amber-border: rgba(251,191,36,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* Ambient glow top */
+    .ambient {
+      position: fixed;
+      top: -300px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 700px;
+      background: radial-gradient(ellipse, rgba(124,58,237,0.08) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Grid bg */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 120px;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0 0;
+      margin-bottom: 96px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-pill {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text3);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 20px;
+      letter-spacing: 0.01em;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent2);
+      background: var(--accent-glow);
+      border: 1px solid var(--accent-border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+
+    .badge-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse-dot 2s ease infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 58px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--accent3) 0%, var(--accent2) 50%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text2);
+      line-height: 1.7;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .hero-sub strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* STATS ROW */
+    .stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin: 32px 0 0;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .stat-num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 500;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border2);
+    }
+
+    /* INPUT AREA */
+    .input-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .input-box {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-box:focus-within {
+      border-color: var(--accent-border);
+      box-shadow: 0 0 0 3px var(--accent-glow), 0 0 40px var(--accent-glow);
+    }
+
+    .input-top {
+      padding: 20px 20px 0;
+    }
+
+    .input-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .input-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent-border);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      resize: none;
+      height: 110px;
+      outline: none;
+      padding: 0;
+    }
+
+    textarea::placeholder { color: var(--text3); }
+
+    .input-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--bg3);
+      border-top: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .input-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text3);
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 5px;
+    }
+
+    .btn-analyze {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent), #6d28d9);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,58,237,0.4), 0 4px 20px rgba(124,58,237,0.2);
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-analyze:hover:not(:disabled) {
+      opacity: 0.92;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(124,58,237,0.4), 0 0 0 1px rgba(124,58,237,0.5);
+    }
+
+    .btn-analyze:active { transform: translateY(0); }
+    .btn-analyze:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-arrow {
+      font-size: 15px;
+      line-height: 1;
+      transition: transform 0.15s;
+    }
+
+    .btn-analyze:hover:not(:disabled) .btn-arrow { transform: translateX(2px); }
+
+    /* LOADING */
+    #loading {
+      display: none;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 12px;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .loading-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent2);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 1px;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text3);
+      transition: color 0.3s;
+    }
+
+    .step.active { color: var(--text2); }
+    .step.done { color: var(--green); }
+
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      flex-shrink: 0;
+      transition: all 0.25s;
+      color: var(--text3);
+    }
+
+    .step.active .step-num {
+      border-color: var(--accent-border);
+      background: var(--accent-glow);
+      color: var(--accent2);
+    }
+
+    .step.done .step-num {
+      border-color: var(--green-border);
+      background: var(--green-bg);
+      color: var(--green);
+      font-size: 11px;
+    }
+
+    /* ERROR */
+    #error {
+      display: none;
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--red);
+      margin-bottom: 12px;
+      animation: fadeUp 0.3s ease;
+    }
+
+    /* RESULTS */
+    #results {
+      display: none;
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .results-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .results-heading {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.02em;
+    }
+
+    .verdict-chip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 13px;
+      border-radius: 20px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .chip-go { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .chip-caution { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .chip-stop { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+    .cards-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: var(--border3); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+    }
+
+    .card-icon-wrap {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .icon-purple { background: var(--accent-glow); border: 1px solid var(--accent-border); }
+    .icon-amber { background: var(--amber-bg); border: 1px solid var(--amber-border); }
+    .icon-red { background: var(--red-bg); border: 1px solid var(--red-border); }
+    .icon-green { background: var(--green-bg); border: 1px solid var(--green-border); }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card-count {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text3);
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover { background: var(--bg3); }
+
+    .item-bullet {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      margin-top: 9px;
+      flex-shrink: 0;
+    }
+
+    .bullet-purple { background: var(--accent2); }
+    .bullet-amber { background: var(--amber); }
+    .bullet-red { background: var(--red); }
+    .bullet-green { background: var(--green); }
+
+    .item-text {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text2);
+    }
+
+    /* VERDICT CARD */
+    .verdict-card {
+      background: var(--bg2);
+      border: 1px solid var(--accent-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verdict-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--accent2) 50%, transparent 100%);
+      opacity: 0.4;
+    }
+
+    .verdict-card-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .verdict-card-label::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent2);
+    }
+
+    .verdict-card-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text2);
+    }
+
+    /* RESET */
+    .reset-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text3);
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      letter-spacing: -0.01em;
+    }
+
+    .reset-btn:hover { color: var(--text2); border-color: var(--border3); background: var(--bg3); }
+
+    /* FOOTER */
+    footer {
+      margin-top: 96px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    .footer-left { display: flex; align-items: center; gap: 7px; }
+    .footer-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 34px; }
+      .stats { gap: 20px; }
+      nav { margin-bottom: 60px; }
+      .hero { margin-bottom: 40px; }
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <div class="tag">Market Intelligence</div>
-    <h1>Sig<span>nal</span></h1>
-    <p class="subtitle">Paste your app idea. We search the real web — Reddit, App Store reviews, competitor data — and tell you if there's actual demand. No opinions. Evidence.</p>
-  </header>
-  <div class="input-section">
-    <label class="input-label" for="idea">Your App Idea</label>
-    <textarea id="idea" placeholder="e.g. An app for Lovable/Bolt users that validates their product idea before they spend weeks building it..."></textarea>
-    <p class="input-hint">Be specific. The more detail you give, the sharper the analysis.</p>
-    <button class="btn" id="analyzeBtn" onclick="analyze()">Run Signal Analysis <span>→</span></button>
+
+<div class="ambient"></div>
+<div class="grid-bg"></div>
+
+<div class="page">
+
+  <nav>
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-name">Signal</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pill">IE Hackathon · March 2026</span>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">
+      <div class="badge-pulse"></div>
+      Real-time market intelligence
+    </div>
+    <h1>Stop guessing.<br><span class="gradient">Validate first.</span></h1>
+    <p class="hero-sub">
+      Paste your startup idea. Signal searches <strong>Reddit threads, App Store reviews,</strong> and competitor data to tell you if real demand exists — before you build a single feature.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-num">Live</span>
+        <span class="stat-label">Web data</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">~30s</span>
+        <span class="stat-label">Analysis time</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Signal types</span>
+      </div>
+    </div>
   </div>
+
+  <div class="input-wrap">
+    <div class="input-box">
+      <div class="input-top">
+        <div class="input-label-row">
+          <div class="input-icon">✦</div>
+          <span class="input-label">Your Idea</span>
+        </div>
+        <textarea id="idea" placeholder="Describe your startup or app idea in plain language. Could be anything — a new SaaS tool, a marketplace, a mobile app, a consumer product. Examples: 'AI scheduling assistant for freelancers', 'marketplace for renting camera gear', 'app that helps Lovable/Bolt users validate their idea before building'..."></textarea>
+      </div>
+      <div class="input-bottom">
+        <div class="input-tags">
+          <span class="tag">Reddit</span>
+          <span class="tag">App Store</span>
+          <span class="tag">Product Hunt</span>
+          <span class="tag">Competitors</span>
+        </div>
+        <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">
+          Analyze <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="loading">
-    <div class="loading-label">Searching the web...</div>
-    <ul class="loading-steps">
-      <li id="step1"><span class="dot"></span>Scanning Reddit for real user complaints</li>
-      <li id="step2"><span class="dot"></span>Checking existing competitors & alternatives</li>
-      <li id="step3"><span class="dot"></span>Analyzing App Store & Product Hunt signals</li>
-      <li id="step4"><span class="dot"></span>Identifying market gaps</li>
-      <li id="step5"><span class="dot"></span>Building your validation report</li>
-    </ul>
+    <div class="loading-top">
+      <div class="spinner"></div>
+      <div>
+        <div class="loading-text">Searching the web for real signals...</div>
+        <div class="loading-sub">This takes about 30 seconds</div>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step" id="step1"><div class="step-num">1</div>Scanning Reddit for real user complaints & requests</div>
+      <div class="step" id="step2"><div class="step-num">2</div>Identifying competitors & existing alternatives</div>
+      <div class="step" id="step3"><div class="step-num">3</div>Analyzing App Store reviews & Product Hunt signals</div>
+      <div class="step" id="step4"><div class="step-num">4</div>Finding underserved gaps in the market</div>
+      <div class="step" id="step5"><div class="step-num">5</div>Compiling your evidence-based validation report</div>
+    </div>
   </div>
+
   <div id="error"></div>
+
   <div id="results">
-    <div class="results-header">
-      <span class="results-title">Validation Report</span>
-      <span class="verdict-badge" id="verdictBadge"></span>
+    <div class="results-top">
+      <span class="results-heading">Validation Report</span>
+      <span class="verdict-chip" id="verdictBadge"></span>
     </div>
-    <div class="cards">
-      <div class="card"><div class="card-header"><div class="card-icon">📡</div><span class="card-title">Demand Signals</span></div><div id="demandSignals"></div></div>
-      <div class="card"><div class="card-header"><div class="card-icon">🗺</div><span class="card-title">Competition Landscape</span></div><div id="competition"></div></div>
-      <div class="card"><div class="card-header"><div class="card-icon">⚠️</div><span class="card-title">Red Flags</span></div><div id="redFlags"></div></div>
-      <div class="card"><div class="card-header"><div class="card-icon">💡</div><span class="card-title">Underserved Gaps You Could Own</span></div><div id="marketGaps"></div></div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon-wrap icon-green">📡</div>
+          <span class="card-title">Demand Signals</span>
+          <span class="card-count" id="demandCount"></span>
+        </div>
+        <div id="demandSignals"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon-wrap icon-amber">🗺</div>
+          <span class="card-title">Competition Landscape</span>
+          <span class="card-count" id="compCount"></span>
+        </div>
+        <div id="competition"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon-wrap icon-red">⚠️</div>
+          <span class="card-title">Red Flags</span>
+          <span class="card-count" id="flagCount"></span>
+        </div>
+        <div id="redFlags"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon-wrap icon-purple">💡</div>
+          <span class="card-title">Gaps You Could Own</span>
+          <span class="card-count" id="gapCount"></span>
+        </div>
+        <div id="marketGaps"></div>
+      </div>
     </div>
-    <div class="verdict-section">
-      <div class="verdict-label">Signal Verdict</div>
-      <div class="verdict-text" id="verdictText"></div>
+
+    <div class="verdict-card">
+      <div class="verdict-card-label">Signal Verdict</div>
+      <div class="verdict-card-text" id="verdictText"></div>
     </div>
+
     <button class="reset-btn" onclick="reset()">← Analyze another idea</button>
   </div>
-  <footer><span>Signal · IE University Hackathon · March 2026</span><span>Powered by real web data</span></footer>
+
+  <footer>
+    <div class="footer-left">
+      <div class="footer-dot"></div>
+      <span>Signal by Bodin Johnston</span>
+    </div>
+    <span>Built at IE Hackathon · Powered by real web data</span>
+  </footer>
+
 </div>
+
 <script>
   const steps = ["step1","step2","step3","step4","step5"];
   let timer;
+
   function animateLoading() {
     let i = 0;
-    document.getElementById(steps[0]).className = "active";
+    document.getElementById(steps[0]).className = "step active";
     timer = setInterval(() => {
       if (i < steps.length - 1) {
-        document.getElementById(steps[i]).className = "done";
+        document.getElementById(steps[i]).className = "step done";
+        document.getElementById(steps[i]).querySelector('.step-num').textContent = '✓';
         i++;
-        document.getElementById(steps[i]).className = "active";
+        document.getElementById(steps[i]).className = "step active";
       }
-    }, 3500);
+    }, 3800);
   }
+
   function stopLoading() {
     clearInterval(timer);
-    steps.forEach(id => document.getElementById(id).className = "done");
+    steps.forEach(id => {
+      document.getElementById(id).className = "step done";
+      document.getElementById(id).querySelector('.step-num').textContent = '✓';
+    });
   }
-  function renderList(items, cls) {
-    return items.map(item => `<div class="signal-item ${cls}"><span class="signal-dot"></span><span>${item}</span></div>`).join('');
+
+  function resetSteps() {
+    steps.forEach((id, i) => {
+      document.getElementById(id).className = "step";
+      document.getElementById(id).querySelector('.step-num').textContent = i + 1;
+    });
   }
+
+  function renderList(items, bulletClass) {
+    return items.map(item =>
+      `<div class="result-item">
+        <span class="item-bullet ${bulletClass}"></span>
+        <span class="item-text">${item}</span>
+      </div>`
+    ).join('');
+  }
+
   function showError(msg) {
     const el = document.getElementById('error');
     el.style.display = 'block';
     el.textContent = '⚠ ' + msg;
   }
+
   async function analyze() {
     const idea = document.getElementById('idea').value.trim();
     if (!idea) return;
+
     document.getElementById('error').style.display = 'none';
     document.getElementById('results').style.display = 'none';
     document.getElementById('analyzeBtn').disabled = true;
     document.getElementById('loading').style.display = 'block';
-    steps.forEach(id => document.getElementById(id).className = '');
+    resetSteps();
     animateLoading();
+
     try {
       const res = await fetch('/api/analyze', {
         method: 'POST',
@@ -260,22 +888,31 @@ cat > index.html << 'EOF'
       showError(err.message);
     }
   }
+
   function renderResults(data) {
     const badge = document.getElementById('verdictBadge');
     badge.textContent = data.verdict_label;
-    badge.className = 'verdict-badge';
-    if (data.verdict_label === 'GO') badge.classList.add('verdict-go');
-    else if (data.verdict_label === 'CAUTION') badge.classList.add('verdict-caution');
-    else badge.classList.add('verdict-stop');
-    document.getElementById('demandSignals').innerHTML = renderList(data.demand_signals, 'green');
-    document.getElementById('competition').innerHTML = renderList(data.competition, 'yellow');
-    document.getElementById('redFlags').innerHTML = renderList(data.red_flags, 'red');
-    document.getElementById('marketGaps').innerHTML = renderList(data.market_gaps, 'green');
+    badge.className = 'verdict-chip';
+    if (data.verdict_label === 'GO') badge.classList.add('chip-go');
+    else if (data.verdict_label === 'CAUTION') badge.classList.add('chip-caution');
+    else badge.classList.add('chip-stop');
+
+    document.getElementById('demandSignals').innerHTML = renderList(data.demand_signals, 'bullet-green');
+    document.getElementById('competition').innerHTML = renderList(data.competition, 'bullet-amber');
+    document.getElementById('redFlags').innerHTML = renderList(data.red_flags, 'bullet-red');
+    document.getElementById('marketGaps').innerHTML = renderList(data.market_gaps, 'bullet-purple');
+
+    document.getElementById('demandCount').textContent = data.demand_signals.length;
+    document.getElementById('compCount').textContent = data.competition.length;
+    document.getElementById('flagCount').textContent = data.red_flags.length;
+    document.getElementById('gapCount').textContent = data.market_gaps.length;
+
     document.getElementById('verdictText').textContent = data.verdict;
     document.getElementById('results').style.display = 'block';
     document.getElementById('analyzeBtn').disabled = false;
-    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth' }), 50);
   }
+
   function reset() {
     document.getElementById('results').style.display = 'none';
     document.getElementById('error').style.display = 'none';
