@@ -6,27 +6,35 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   try {
     const idea = req.body.idea;
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const systemPrompt = `You are a startup advisor. Return ONLY valid JSON with no markdown or backticks.
+The JSON must have these exact keys:
+demand_signals: array of 3 strings
+competition: array of 2 strings  
+red_flags: array of 2 strings
+market_gaps: array of 2 strings
+verdict: one sentence string
+verdict_label: exactly GO or CAUTION or STOP
+roadmap: array of exactly 5 objects each with: step number, phase string, title string, description string under 15 words, priority string of immediate or short-term or long-term, sources array with one object having name and url, contacts array with one object having name url and reason`;
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization': 'Bearer ' + process.env.GROQ_API_KEY,
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'llama-3.1-8b-instant',
         max_tokens: 1500,
-        system: `You are a startup advisor. Return ONLY valid JSON no markdown:
-{"demand_signals":["s1","s2","s3"],"competition":["c1","c2"],"red_flags":["r1","r2"],"market_gaps":["g1","g2"],"verdict":"One sentence.","verdict_label":"GO","roadmap":[{"step":1,"phase":"P","title":"T","description":"D.","priority":"immediate","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":2,"phase":"P","title":"T","description":"D.","priority":"immediate","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":3,"phase":"P","title":"T","description":"D.","priority":"short-term","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":4,"phase":"P","title":"T","description":"D.","priority":"short-term","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":5,"phase":"P","title":"T","description":"D.","priority":"long-term","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]}]}
-Fill in real values. verdict_label = GO CAUTION or STOP. If licenses needed step 1 = Legal. All text under 12 words. Use real known URLs.`,
-        messages: [{ role: 'user', content: 'Validate: "' + idea + '"' }]
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Validate this startup idea and create a launch roadmap: ' + idea }
+        ]
       })
     });
     const data = await response.json();
     if (data.error) return res.status(400).json({ error: data.error.message });
-    const textBlock = data.content.find(b => b.type === 'text');
-    if (!textBlock) return res.status(500).json({ error: 'No response' });
-    const clean = textBlock.text.replace(/```json|```/g, '').trim();
+    const clean = data.choices[0].message.content.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     res.status(200).json(parsed);
   } catch (err) {
