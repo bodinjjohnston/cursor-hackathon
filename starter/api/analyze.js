@@ -6,14 +6,14 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   try {
     const idea = req.body.idea;
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY,
+        'Authorization': 'Bearer ' + process.env.GROQ_API_KEY,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'llama-3.1-8b-instant',
         max_tokens: 1500,
         messages: [
           { role: 'system', content: 'You are a startup advisor. Return ONLY valid JSON no markdown: {"demand_signals":["s1","s2","s3"],"competition":["c1","c2"],"red_flags":["r1","r2"],"market_gaps":["g1","g2"],"verdict":"One sentence.","verdict_label":"GO","roadmap":[{"step":1,"phase":"Legal","title":"Title","description":"Description.","priority":"immediate","sources":[{"name":"Name","url":"https://example.com"}],"contacts":[{"name":"Name","url":"https://example.com","reason":"Why"}]},{"step":2,"phase":"Research","title":"Title","description":"Description.","priority":"immediate","sources":[{"name":"Name","url":"https://example.com"}],"contacts":[{"name":"Name","url":"https://example.com","reason":"Why"}]},{"step":3,"phase":"Build","title":"Title","description":"Description.","priority":"short-term","sources":[{"name":"Name","url":"https://example.com"}],"contacts":[{"name":"Name","url":"https://example.com","reason":"Why"}]},{"step":4,"phase":"Launch","title":"Title","description":"Description.","priority":"short-term","sources":[{"name":"Name","url":"https://example.com"}],"contacts":[{"name":"Name","url":"https://example.com","reason":"Why"}]},{"step":5,"phase":"Grow","title":"Title","description":"Description.","priority":"long-term","sources":[{"name":"Name","url":"https://example.com"}],"contacts":[{"name":"Name","url":"https://example.com","reason":"Why"}]}]} verdict_label must be GO CAUTION or STOP.' },
