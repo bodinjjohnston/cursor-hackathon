@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signal — Real Market Validation</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -138,6 +139,28 @@
     .hero {
       text-align: center;
       margin-bottom: 56px;
+    }
+
+    .signal-title {
+      font-family: 'Press Start 2P', 'Inter', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: clamp(28px, 6vw, 58px);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      margin-bottom: 18px;
+      line-height: 1.05;
+      text-transform: none;
+
+      /* Sharp left/right split: white on left, purple on right */
+      background: linear-gradient(90deg, #ffffff 0%, #ffffff 50%, var(--accent2) 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      /* Retro “lift” */
+      text-shadow:
+        2px 2px 0 rgba(0,0,0,0.35),
+        0 0 18px rgba(167,139,250,0.18);
+      user-select: none;
     }
 
     .hero-badge {
@@ -460,12 +483,24 @@
     /* RESULTS */
     #results {
       display: none;
-      animation: fadeUp 0.4s ease;
     }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Result cards: staggered fade-up when shown */
+    #results .cards-grid .card,
+    #results .verdict-card {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    #results .cards-grid .card.card-animate,
+    #results .verdict-card.card-animate {
+      animation: fadeUp 0.4s ease both;
+      animation-delay: var(--delay, 0ms);
     }
 
     .results-top {
@@ -686,6 +721,7 @@
       <div class="badge-pulse"></div>
       Real-time market intelligence
     </div>
+    <div class="signal-title">Signal</div>
     <h1>Stop guessing.<br><span class="gradient">Validate first.</span></h1>
     <p class="hero-sub">
       Paste your startup idea. Signal searches <strong>Reddit threads, App Store reviews,</strong> and competitor data to tell you if real demand exists — before you build a single feature.
@@ -909,8 +945,24 @@
 
     document.getElementById('verdictText').textContent = data.verdict;
     document.getElementById('results').style.display = 'block';
+    animateResultCards();
     document.getElementById('analyzeBtn').disabled = false;
     setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth' }), 50);
+  }
+
+  function animateResultCards() {
+    const cards = document.querySelectorAll('#results .cards-grid .card, #results .verdict-card');
+
+    // Reset to allow re-animation when analyzing multiple ideas.
+    cards.forEach((card, i) => {
+      card.classList.remove('card-animate');
+      card.style.setProperty('--delay', `${i * 100}ms`);
+    });
+
+    // Force a layout pass so the animation reliably restarts.
+    void document.getElementById('results').offsetHeight;
+
+    cards.forEach(card => card.classList.add('card-animate'));
   }
 
   function reset() {
