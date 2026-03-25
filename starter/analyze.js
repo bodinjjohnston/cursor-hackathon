@@ -17,33 +17,15 @@ export default async function handler(req, res) {
         max_tokens: 800,
         response_format: { type: 'json_object' },
         messages: [
-          {
-            role: 'system',
-            content: 'You are a startup analyst. Always respond with valid JSON only. No markdown. No extra text.'
-          },
-          {
-            role: 'user',
-            content: `Analyze this startup idea: "${idea}"
-
-Respond with exactly this JSON structure, filling in real values:
-{
-  "demand_signals": ["real finding 1", "real finding 2", "real finding 3"],
-  "competition": ["real competitor 1", "real competitor 2"],
-  "red_flags": ["real risk 1", "real risk 2"],
-  "market_gaps": ["real opportunity 1", "real opportunity 2"],
-  "verdict": "One clear sentence about whether to pursue this idea.",
-  "verdict_label": "GO"
-}
-
-verdict_label must be GO, CAUTION, or STOP.`
-          }
+          { role: 'system', content: 'You are a startup analyst. Respond with valid JSON only. Use simple ASCII characters only in your response. No apostrophes in values - use plain words instead.' },
+          { role: 'user', content: 'Analyze this startup idea in JSON: ' + idea.replace(/['"]/g, '') + '. Return: {"demand_signals":["s1","s2","s3"],"competition":["c1","c2"],"red_flags":["r1","r2"],"market_gaps":["g1","g2"],"verdict":"one sentence","verdict_label":"GO or CAUTION or STOP"}' }
         ]
       })
     });
     const data = await response.json();
     if (data.error) return res.status(400).json({ error: data.error.message });
     const raw = data.choices[0].message.content;
-    const clean = raw.replace(/```json|```/g, '').trim();
+    const clean = raw.replace(/```json|```/g, '').replace(/[\u2018\u2019\u201c\u201d]/g, '"').trim();
     const parsed = JSON.parse(clean);
     res.status(200).json(parsed);
   } catch (err) {
