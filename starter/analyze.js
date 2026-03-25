@@ -13,76 +13,32 @@ export default async function handler(req, res) {
         'Authorization': 'Bearer ' + process.env.GROQ_API_KEY,
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
-        max_tokens: 1500,
+        model: 'gemma2-9b-it',
+        max_tokens: 1200,
         response_format: { type: 'json_object' },
         messages: [
           {
-            role: 'system',
-            content: 'You are a startup market analyst. Always respond with valid JSON only. No markdown. No explanation. Just JSON.'
-          },
-          {
             role: 'user',
-            content: `Analyze this startup idea: "${idea}"
+            content: `You are a startup analyst. Analyze this idea: "${idea}"
 
-Respond with this exact JSON structure:
+Return ONLY this JSON with no other text:
 {
-  "demand_signals": ["signal 1", "signal 2", "signal 3"],
+  "demand_signals": ["finding 1", "finding 2", "finding 3"],
   "competition": ["competitor 1", "competitor 2"],
   "red_flags": ["risk 1", "risk 2"],
-  "market_gaps": ["gap 1", "gap 2"],
-  "verdict": "One sentence verdict on whether to pursue this.",
+  "market_gaps": ["opportunity 1", "opportunity 2"],
+  "verdict": "One clear sentence on whether to pursue this.",
   "verdict_label": "GO",
   "roadmap": [
-    {
-      "step": 1,
-      "phase": "Legal",
-      "title": "Register your business",
-      "description": "Set up legal entity and get required licenses.",
-      "priority": "immediate",
-      "sources": [{"name": "IRS Business Registration", "url": "https://www.irs.gov/businesses"}],
-      "contacts": [{"name": "SCORE Mentors", "url": "https://www.score.org", "reason": "Free startup advice"}]
-    },
-    {
-      "step": 2,
-      "phase": "Research",
-      "title": "Validate with real users",
-      "description": "Talk to 10 potential customers before building.",
-      "priority": "immediate",
-      "sources": [{"name": "Y Combinator How to Start", "url": "https://www.ycombinator.com/library/6g-how-to-talk-to-users"}],
-      "contacts": [{"name": "LinkedIn", "url": "https://www.linkedin.com", "reason": "Find target customers"}]
-    },
-    {
-      "step": 3,
-      "phase": "Build",
-      "title": "Build MVP",
-      "description": "Build minimum viable product in 4 weeks.",
-      "priority": "short-term",
-      "sources": [{"name": "Lovable.dev", "url": "https://lovable.dev"}],
-      "contacts": [{"name": "Indie Hackers", "url": "https://www.indiehackers.com", "reason": "Find technical co-founder"}]
-    },
-    {
-      "step": 4,
-      "phase": "Launch",
-      "title": "Launch publicly",
-      "description": "Post on Product Hunt and relevant communities.",
-      "priority": "short-term",
-      "sources": [{"name": "Product Hunt", "url": "https://www.producthunt.com"}],
-      "contacts": [{"name": "Product Hunt", "url": "https://www.producthunt.com/posts/new", "reason": "Submit your launch"}]
-    },
-    {
-      "step": 5,
-      "phase": "Grow",
-      "title": "Get first paying customers",
-      "description": "Convert free users to paid within 30 days.",
-      "priority": "long-term",
-      "sources": [{"name": "Stripe Atlas", "url": "https://stripe.com/atlas"}],
-      "contacts": [{"name": "AngelList", "url": "https://www.angellist.com", "reason": "Find early investors"}]
-    }
+    {"step": 1, "phase": "Legal", "title": "Register Business", "description": "Set up legal entity and licenses.", "priority": "immediate", "sources": [{"name": "IRS.gov", "url": "https://www.irs.gov/businesses"}], "contacts": [{"name": "SCORE", "url": "https://www.score.org", "reason": "Free mentoring"}]},
+    {"step": 2, "phase": "Research", "title": "Validate with Users", "description": "Interview 10 target customers.", "priority": "immediate", "sources": [{"name": "YC User Research", "url": "https://www.ycombinator.com/library/6g-how-to-talk-to-users"}], "contacts": [{"name": "LinkedIn", "url": "https://www.linkedin.com", "reason": "Find customers"}]},
+    {"step": 3, "phase": "Build", "title": "Build MVP", "description": "Launch basic version in 4 weeks.", "priority": "short-term", "sources": [{"name": "Lovable", "url": "https://lovable.dev"}], "contacts": [{"name": "Indie Hackers", "url": "https://www.indiehackers.com", "reason": "Find co-founder"}]},
+    {"step": 4, "phase": "Launch", "title": "Go Public", "description": "Launch on Product Hunt and Reddit.", "priority": "short-term", "sources": [{"name": "Product Hunt", "url": "https://www.producthunt.com"}], "contacts": [{"name": "Product Hunt", "url": "https://www.producthunt.com/posts/new", "reason": "Submit launch"}]},
+    {"step": 5, "phase": "Grow", "title": "Get Paying Users", "description": "Convert free users to paid.", "priority": "long-term", "sources": [{"name": "Stripe", "url": "https://stripe.com"}], "contacts": [{"name": "AngelList", "url": "https://www.angellist.com", "reason": "Find investors"}]}
   ]
 }
 
-Replace all values with real analysis of the idea. verdict_label must be GO, CAUTION, or STOP.`
+Replace demand_signals, competition, red_flags, market_gaps, verdict, and verdict_label with real analysis. Keep the roadmap structure but customize titles and descriptions. verdict_label must be GO, CAUTION, or STOP.`
           }
         ]
       })
