@@ -17,8 +17,26 @@ export default async function handler(req, res) {
         max_tokens: 800,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system', content: 'You are a startup analyst. Respond with valid JSON only. Use simple ASCII characters only in your response. No apostrophes in values - use plain words instead.' },
-          { role: 'user', content: 'Analyze this startup idea in JSON: ' + idea.replace(/['"]/g, '') + '. Return: {"demand_signals":["s1","s2","s3"],"competition":["c1","c2"],"red_flags":["r1","r2"],"market_gaps":["g1","g2"],"verdict":"one sentence","verdict_label":"GO or CAUTION or STOP"}' }
+          {
+            role: 'system',
+            content: 'You are a startup market analyst. When asked to analyze an idea, provide specific real insights based on your knowledge. Never use placeholder text like s1, s2, c1. Always write actual findings. Use simple words with no apostrophes or special characters.'
+          },
+          {
+            role: 'user',
+            content: `Analyze this startup idea: ${idea}
+
+Write specific real insights about this exact idea. Return this JSON with actual content:
+{
+  "demand_signals": ["specific real signal about this idea", "another real signal", "third real signal"],
+  "competition": ["name a real competitor", "name another real competitor"],
+  "red_flags": ["specific real risk for this idea", "another real risk"],
+  "market_gaps": ["specific real opportunity", "another real opportunity"],
+  "verdict": "Specific sentence about whether this idea is worth pursuing and why.",
+  "verdict_label": "GO"
+}
+
+verdict_label must be GO, CAUTION, or STOP based on your analysis.`
+          }
         ]
       })
     });
