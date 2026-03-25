@@ -13,32 +13,37 @@ export default async function handler(req, res) {
         'Authorization': 'Bearer ' + process.env.GROQ_API_KEY,
       },
       body: JSON.stringify({
-        model: 'gemma2-9b-it',
+        model: 'llama3-70b-8192',
         max_tokens: 800,
         response_format: { type: 'json_object' },
         messages: [
           {
+            role: 'system',
+            content: 'You are a startup analyst. Always respond with valid JSON only. No markdown. No extra text.'
+          },
+          {
             role: 'user',
             content: `Analyze this startup idea: "${idea}"
 
-Return ONLY this JSON:
+Respond with exactly this JSON structure, filling in real values:
 {
-  "demand_signals": ["finding 1", "finding 2", "finding 3"],
-  "competition": ["competitor 1", "competitor 2"],
-  "red_flags": ["risk 1", "risk 2"],
-  "market_gaps": ["opportunity 1", "opportunity 2"],
-  "verdict": "One sentence verdict.",
+  "demand_signals": ["real finding 1", "real finding 2", "real finding 3"],
+  "competition": ["real competitor 1", "real competitor 2"],
+  "red_flags": ["real risk 1", "real risk 2"],
+  "market_gaps": ["real opportunity 1", "real opportunity 2"],
+  "verdict": "One clear sentence about whether to pursue this idea.",
   "verdict_label": "GO"
 }
 
-Replace all values with real analysis. verdict_label must be GO, CAUTION, or STOP. Return only JSON.`
+verdict_label must be GO, CAUTION, or STOP.`
           }
         ]
       })
     });
     const data = await response.json();
     if (data.error) return res.status(400).json({ error: data.error.message });
-    const clean = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+    const raw = data.choices[0].message.content;
+    const clean = raw.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     res.status(200).json(parsed);
   } catch (err) {
