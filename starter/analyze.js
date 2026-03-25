@@ -14,31 +14,24 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'gemma2-9b-it',
-        max_tokens: 1200,
+        max_tokens: 800,
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'user',
-            content: `You are a startup analyst. Analyze this idea: "${idea}"
+            content: `Analyze this startup idea: "${idea}"
 
-Return ONLY this JSON with no other text:
+Return ONLY this JSON:
 {
   "demand_signals": ["finding 1", "finding 2", "finding 3"],
   "competition": ["competitor 1", "competitor 2"],
   "red_flags": ["risk 1", "risk 2"],
   "market_gaps": ["opportunity 1", "opportunity 2"],
-  "verdict": "One clear sentence on whether to pursue this.",
-  "verdict_label": "GO",
-  "roadmap": [
-    {"step": 1, "phase": "Legal", "title": "Register Business", "description": "Set up legal entity and licenses.", "priority": "immediate", "sources": [{"name": "IRS.gov", "url": "https://www.irs.gov/businesses"}], "contacts": [{"name": "SCORE", "url": "https://www.score.org", "reason": "Free mentoring"}]},
-    {"step": 2, "phase": "Research", "title": "Validate with Users", "description": "Interview 10 target customers.", "priority": "immediate", "sources": [{"name": "YC User Research", "url": "https://www.ycombinator.com/library/6g-how-to-talk-to-users"}], "contacts": [{"name": "LinkedIn", "url": "https://www.linkedin.com", "reason": "Find customers"}]},
-    {"step": 3, "phase": "Build", "title": "Build MVP", "description": "Launch basic version in 4 weeks.", "priority": "short-term", "sources": [{"name": "Lovable", "url": "https://lovable.dev"}], "contacts": [{"name": "Indie Hackers", "url": "https://www.indiehackers.com", "reason": "Find co-founder"}]},
-    {"step": 4, "phase": "Launch", "title": "Go Public", "description": "Launch on Product Hunt and Reddit.", "priority": "short-term", "sources": [{"name": "Product Hunt", "url": "https://www.producthunt.com"}], "contacts": [{"name": "Product Hunt", "url": "https://www.producthunt.com/posts/new", "reason": "Submit launch"}]},
-    {"step": 5, "phase": "Grow", "title": "Get Paying Users", "description": "Convert free users to paid.", "priority": "long-term", "sources": [{"name": "Stripe", "url": "https://stripe.com"}], "contacts": [{"name": "AngelList", "url": "https://www.angellist.com", "reason": "Find investors"}]}
-  ]
+  "verdict": "One sentence verdict.",
+  "verdict_label": "GO"
 }
 
-Replace demand_signals, competition, red_flags, market_gaps, verdict, and verdict_label with real analysis. Keep the roadmap structure but customize titles and descriptions. verdict_label must be GO, CAUTION, or STOP.`
+Replace all values with real analysis. verdict_label must be GO, CAUTION, or STOP. Return only JSON.`
           }
         ]
       })
