@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1500,
         system: `You are a startup advisor. Return ONLY valid JSON no markdown:
 {"demand_signals":["s1","s2","s3"],"competition":["c1","c2"],"red_flags":["r1","r2"],"market_gaps":["g1","g2"],"verdict":"One sentence.","verdict_label":"GO","roadmap":[{"step":1,"phase":"P","title":"T","description":"D.","priority":"immediate","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":2,"phase":"P","title":"T","description":"D.","priority":"immediate","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":3,"phase":"P","title":"T","description":"D.","priority":"short-term","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":4,"phase":"P","title":"T","description":"D.","priority":"short-term","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]},{"step":5,"phase":"P","title":"T","description":"D.","priority":"long-term","sources":[{"name":"N","url":"https://example.com"}],"contacts":[{"name":"N","url":"https://example.com","reason":"R"}]}]}
