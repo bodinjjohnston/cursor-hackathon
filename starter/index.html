@@ -492,13 +492,15 @@
 
     /* Result cards: staggered fade-up when shown */
     #results .cards-grid .card,
-    #results .verdict-card {
+    #results .verdict-card,
+    #results .roadmap-step {
       opacity: 0;
       transform: translateY(10px);
     }
 
     #results .cards-grid .card.card-animate,
-    #results .verdict-card.card-animate {
+    #results .verdict-card.card-animate,
+    #results .roadmap-step.card-animate {
       animation: fadeUp 0.4s ease both;
       animation-delay: var(--delay, 0ms);
     }
@@ -722,6 +724,239 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ROADMAP */
+    #roadmap {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .roadmap {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .roadmap-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .roadmap-heading .roadmap-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text2);
+      letter-spacing: 0.02em;
+    }
+
+    .roadmap-heading .roadmap-subtitle {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 0.01em;
+    }
+
+    .roadmap-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .roadmap-step {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .roadmap-step summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 16px 16px;
+      user-select: none;
+      background: var(--bg2);
+    }
+
+    .roadmap-step summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .roadmap-step[open] summary {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .roadmap-step-summary {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .roadmap-step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .roadmap-step-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .roadmap-phase {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    .roadmap-step-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .roadmap-summary-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .roadmap-priority {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      background: var(--bg3);
+      white-space: nowrap;
+    }
+
+    .roadmap-priority.priority-immediate {
+      border-color: var(--amber-border);
+      background: rgba(251,191,36,0.10);
+      color: var(--amber);
+    }
+
+    .roadmap-priority.priority-short-term {
+      border-color: var(--green-border);
+      background: rgba(52,211,153,0.10);
+      color: var(--green);
+    }
+
+    .roadmap-priority.priority-long-term {
+      border-color: var(--border2);
+      background: var(--bg4);
+      color: var(--text2);
+    }
+
+    .roadmap-chevron {
+      font-size: 18px;
+      color: var(--text3);
+      transform: rotate(0deg);
+      transition: transform 0.15s ease;
+    }
+
+    .roadmap-step[open] .roadmap-chevron {
+      transform: rotate(90deg);
+    }
+
+    .roadmap-step-content {
+      padding: 14px 16px 16px;
+      background: var(--bg2);
+    }
+
+    .roadmap-description {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--text2);
+      white-space: pre-wrap;
+    }
+
+    .roadmap-section {
+      margin-top: 12px;
+    }
+
+    .roadmap-section-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--text3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .roadmap-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .roadmap-link-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .roadmap-link-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    .roadmap-dot-sources { background: var(--amber); }
+    .roadmap-dot-contacts { background: var(--green); }
+
+    .roadmap-link-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .roadmap-link {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,0.22);
+      transition: border-color 0.15s ease, color 0.15s ease;
+      word-break: break-word;
+    }
+
+    .roadmap-link:hover {
+      color: var(--accent2);
+      border-bottom-color: rgba(167,139,250,0.6);
+    }
+
+    .roadmap-link-reason {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text2);
+      white-space: pre-wrap;
+    }
+
     /* RESET */
     .reset-btn {
       display: inline-flex;
@@ -903,6 +1138,14 @@
       <div class="verdict-body" id="verdictText"></div>
     </div>
 
+    <div id="roadmap" class="roadmap">
+      <div class="roadmap-heading">
+        <span class="roadmap-title">Roadmap</span>
+        <span class="roadmap-subtitle">Execution plan (5-7 steps)</span>
+      </div>
+      <div class="roadmap-steps" id="roadmapSteps"></div>
+    </div>
+
     <button class="reset-btn" onclick="reset()">← Analyze another idea</button>
   </div>
 
@@ -957,6 +1200,95 @@
     ).join('');
   }
 
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderRoadmap(roadmap) {
+    const priorityToClass = (p) => {
+      if (p === 'immediate') return 'priority-immediate';
+      if (p === 'short-term') return 'priority-short-term';
+      return 'priority-long-term';
+    };
+
+    const priorityToLabel = (p) => {
+      if (p === 'immediate') return 'Immediate';
+      if (p === 'short-term') return 'Short-term';
+      return 'Long-term';
+    };
+
+    return roadmap.map((step, i) => {
+      const stepNumber = escapeHtml(step.step_number);
+      const phaseName = escapeHtml(step.phase_name);
+      const title = escapeHtml(step.title);
+      const description = escapeHtml(step.description);
+      const priorityClass = priorityToClass(step.priority);
+      const priorityLabel = priorityToLabel(step.priority);
+
+      const sources = (step.sources || []).map(src => {
+        const name = escapeHtml(src.name);
+        const url = escapeHtml(src.url);
+        return `
+          <div class="roadmap-link-row">
+            <span class="roadmap-link-dot roadmap-dot-sources"></span>
+            <div class="roadmap-link-text">
+              <a class="roadmap-link" href="${url}" target="_blank" rel="noopener noreferrer">${name}</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const contacts = (step.contacts || []).map(contact => {
+        const name = escapeHtml(contact.name);
+        const url = escapeHtml(contact.url);
+        const reason = escapeHtml(contact.reason);
+        return `
+          <div class="roadmap-link-row">
+            <span class="roadmap-link-dot roadmap-dot-contacts"></span>
+            <div class="roadmap-link-text">
+              <a class="roadmap-link" href="${url}" target="_blank" rel="noopener noreferrer">${name}</a>
+              <div class="roadmap-link-reason">${reason}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <details class="roadmap-step"${i === 0 ? ' open' : ''}>
+          <summary>
+            <div class="roadmap-step-summary">
+              <div class="roadmap-step-num">${stepNumber}</div>
+              <div class="roadmap-step-main">
+                <div class="roadmap-phase">${phaseName}</div>
+                <div class="roadmap-step-title">${title}</div>
+              </div>
+              <div class="roadmap-summary-right">
+                <span class="roadmap-priority ${priorityClass}">${priorityLabel}</span>
+                <span class="roadmap-chevron">›</span>
+              </div>
+            </div>
+          </summary>
+          <div class="roadmap-step-content">
+            <div class="roadmap-description">${description}</div>
+            <div class="roadmap-section">
+              <div class="roadmap-section-title">Sources</div>
+              <div class="roadmap-links">${sources || ''}</div>
+            </div>
+            <div class="roadmap-section">
+              <div class="roadmap-section-title">Contacts</div>
+              <div class="roadmap-links">${contacts || ''}</div>
+            </div>
+          </div>
+        </details>
+      `;
+    }).join('');
+  }
+
   function showError(msg) {
     const el = document.getElementById('error');
     el.style.display = 'block';
@@ -998,6 +1330,8 @@
     const verdictCard = document.getElementById('verdictCard');
     const verdictIcon = document.getElementById('verdictIcon');
     const verdictValue = document.getElementById('verdictValue');
+    const roadmapSection = document.getElementById('roadmap');
+    const roadmapSteps = document.getElementById('roadmapSteps');
 
     badge.textContent = data.verdict_label;
     badge.className = 'verdict-chip';
@@ -1031,6 +1365,15 @@
     document.getElementById('gapCount').textContent = data.market_gaps.length;
 
     document.getElementById('verdictText').textContent = data.verdict;
+
+    if (Array.isArray(data.roadmap) && data.roadmap.length) {
+      roadmapSteps.innerHTML = renderRoadmap(data.roadmap);
+      roadmapSection.style.display = 'block';
+    } else {
+      roadmapSection.style.display = 'none';
+      roadmapSteps.innerHTML = '';
+    }
+
     document.getElementById('results').style.display = 'block';
     animateResultCards();
     document.getElementById('analyzeBtn').disabled = false;
@@ -1038,7 +1381,7 @@
   }
 
   function animateResultCards() {
-    const cards = document.querySelectorAll('#results .cards-grid .card, #results .verdict-card');
+    const cards = document.querySelectorAll('#results .cards-grid .card, #results .verdict-card, #results .roadmap-step');
 
     // Reset to allow re-animation when analyzing multiple ideas.
     cards.forEach((card, i) => {
@@ -1057,6 +1400,10 @@
     document.getElementById('error').style.display = 'none';
     document.getElementById('idea').value = '';
     document.getElementById('analyzeBtn').disabled = false;
+    const roadmapSection = document.getElementById('roadmap');
+    const roadmapSteps = document.getElementById('roadmapSteps');
+    if (roadmapSection) roadmapSection.style.display = 'none';
+    if (roadmapSteps) roadmapSteps.innerHTML = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
